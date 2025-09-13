@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Lua Obfuscator</title>
+  <style>
+    body { background:#0b1020; color:#e6eef8; font-family:sans-serif; padding:20px; }
+    textarea { width:100%; height:200px; background:#111a2c; color:#0ff; border:1px solid #0ff; padding:10px; }
+    button { margin-top:10px; padding:10px 20px; border:none; cursor:pointer; border-radius:8px; }
+    .btn { background:linear-gradient(90deg,#00f0ff,#ff00d0); color:#000; font-weight:bold; }
+  </style>
+</head>
+<body>
+  <h1>🌌 Hiroshi Lua Obfuscator</h1>
+  <textarea id="code" placeholder="Paste Lua code here..."></textarea><br>
+  <button class="btn" onclick="submitCode()">Submit & Download</button>
+  <button class="btn" onclick="copyGetUrl()">Copy Executor URL</button>
+
+  <script>
+    async function submitCode() {
+      const code = document.getElementById("code").value;
+      const res = await fetch("/api/obfuscate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+      });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "obfuscated.lua"; a.click();
+    }
+    function copyGetUrl() {
+      const code = encodeURIComponent(document.getElementById("code").value);
+      const url = location.origin + "/api/obfuscate?code=" + code;
+      navigator.clipboard.writeText(url);
+      alert("Copied GET URL for executor:\\n" + url);
+    }
+  </script>
+</body>
+</html>
